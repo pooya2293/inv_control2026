@@ -5,6 +5,7 @@ import os
 import traceback
 import math
 from decimal import localcontext, Decimal, ROUND_HALF_UP, ROUND_HALF_DOWN
+from datetime import datetime, timedelta
 # کتابخانه‌های xlwings حذف و pandas جایگزین شد.
 # sys, io, os, traceback, math, decimal برای منطق اصلی و پشتیبانی از فارسی حفظ شدند.
 
@@ -666,6 +667,9 @@ def main():
                 else:
                     safety_stock_finall = safety_stock_days
 
+                today = datetime.now().date()
+                order_horizen_days = timedelta(days=current_order_horizon - 1)
+
                 # --- فراخوانی تابع محاسبه سفارش (هسته محاسباتی) ---
                 
                 order_qty = calculate_order_quantity(
@@ -692,7 +696,7 @@ def main():
 
                 if order_qty > 0:
                     suggested_orders_for_platform.append(
-                        (product_code, order_qty))
+                        (today + order_horizen_days ,product_code, order_qty))
                 
                 # پرش به محصول بعدی 
                 current_row += product_gap
@@ -710,11 +714,11 @@ def main():
         output_rows = []
         for platform, orders in main_order.items():
             output_rows.append([platform, ''])
-            output_rows.append(["کد محصول", "مقدار سفارش"])
+            output_rows.append(["تاریخ","کد محصول", "مقدار سفارش"])
             if orders:
-                for code, qty in orders:
-                    output_rows.append([code, qty])
-            output_rows.append(['', '']) # فضای خالی
+                for time,code, qty in orders:
+                    output_rows.append([time,code, qty])
+            output_rows.append(['','', '']) # فضای خالی
 
         output_df = pd.DataFrame(output_rows)
         new_output_file_name = 'suggested_orders_pandas.xlsx'
