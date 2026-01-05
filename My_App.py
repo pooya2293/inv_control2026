@@ -255,7 +255,7 @@ def calculate_order_quantity(
                 # جستجو در دیکشنری main_order که قبلاً در main تعریف شده است.
                 platform_orders = order_list.get(f'P{i + 1}', [])
                 last_day_order = next(
-                    (item[1] for item in platform_orders if item[0] == product_code), 0)
+                    (item[2] for item in platform_orders if item[1] == product_code), 0)
                 sum_of_calc_income += last_day_order
             
             end_index = order_horizon + lead_time - 1
@@ -322,7 +322,7 @@ def calculate_order_quantity(
                     if i > 2: # i-2 یعنی 3 روز قبل
                         platform_orders = order_list.get(f'P{i - 2}', []) 
                         platform_order_incoming = next(
-                                (item[1] for item in platform_orders if item[0] == product_code), 0)
+                                (item[2] for item in platform_orders if item[1] == product_code), 0)
                 
                 # خواندن ورودی‌های پیش‌بینی شده از اکسل
                 daily_incoming_i = daily_incoming[i] if i < len(daily_incoming) else 0
